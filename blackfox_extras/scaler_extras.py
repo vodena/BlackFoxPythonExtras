@@ -2,6 +2,23 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def scale_data_input(input_data, metadata, ignore_integrated_scaler=False):
+    """
+        Scale input data from real values to normalized.
+
+        Parameters
+        ----------
+        data : numpy.array
+            Data as numpy array
+        metadata : dict
+            Model metadata
+        ignore_integrated_scaler: bool
+            If False(default), only scale data if model does not contain integrated scaler
+
+        Returns
+        -------
+        numpy.array
+            Scaled data
+        """
     if ignore_integrated_scaler or not metadata['is_scaler_integrated']:
         return __scale_data_from_config(
             input_data,
@@ -13,6 +30,23 @@ def scale_data_input(input_data, metadata, ignore_integrated_scaler=False):
 
 
 def scale_data_output(output_data, metadata, ignore_integrated_scaler=False):
+    """
+        Scale data from normalized values to real values. Use after prediction.
+
+        Parameters
+        ----------
+        data : numpy.array
+            Data as numpy array
+        metadata : dict
+            Model metadata
+        ignore_integrated_scaler: bool
+            If False(default), only scale data if model does not contain integrated scaler
+
+        Returns
+        -------
+        numpy.array
+            Scaled data
+        """
     if ignore_integrated_scaler or not metadata['is_scaler_integrated']:
         return __scale_data_from_config(
             output_data,
