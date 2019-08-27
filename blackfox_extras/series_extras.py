@@ -25,9 +25,9 @@ def get_series_padding(metadata):
     left_output = max(list(map(
         lambda x: -metadata['output_shifts'][x] + metadata['output_windows'][x], out_range)))
 
-    right_input = min(
+    right_input = max(
         list(map(lambda x: metadata['input_shifts'][x], in_range)))
-    right_output = min(
+    right_output = max(
         list(map(lambda x: metadata['output_shifts'][x], out_range)))
 
     sample_step = metadata['output_sample_step']
