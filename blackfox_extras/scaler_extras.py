@@ -1,7 +1,7 @@
 from sklearn.preprocessing import MinMaxScaler
 
 
-def scale_data_input(input_data, metadata, ignore_integrated_scaler=False):
+def scale_input_data(input_data, metadata, ignore_integrated_scaler=False):
     """
         Scale input data from real values to normalized.
 
@@ -29,7 +29,7 @@ def scale_data_input(input_data, metadata, ignore_integrated_scaler=False):
         return input_data
 
 
-def scale_data_output(output_data, metadata, ignore_integrated_scaler=False):
+def scale_output_data(output_data, metadata, ignore_integrated_scaler=False):
     """
         Scale data from normalized values to real values. Use after prediction.
 

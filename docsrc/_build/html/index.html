@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Black Fox extras documentation &#8212; blackfox-extras  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="black-fox-extras-documentation">
+<h1>Black Fox extras documentation<a class="headerlink" href="#black-fox-extras-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="user-s-guide">
+<h2>User’s Guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<p>To install Black Fox extras use <a class="reference external" href="https://pip.pypa.io/en/stable/quickstart/">pip</a> or <a class="reference external" href="https://docs.pipenv.org/en/latest/">pipenv</a>:</p>
+<div class="highlight-PowerShell notranslate"><div class="highlight"><pre><span></span><span class="p">$</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">-U</span> <span class="n">blackfox-extras</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-usage">
+<h3>Example usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h3>
+<p>Model prediction with preparing data and calculating mean absolute error:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blackfox</span> <span class="kn">import</span> <span class="n">BlackFox</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span>
+
+<span class="c1"># Create an instance of the Black Fox class by supplying api URL</span>
+<span class="n">bf</span> <span class="o">=</span> <span class="n">BlackFox</span><span class="p">(</span><span class="s1">&#39;bf.endpoint.api.address&#39;</span><span class="p">)</span>
+
+<span class="n">ann_file</span> <span class="o">=</span> <span class="s1">&#39;model.h5&#39;</span>
+
+<span class="c1"># Get model metadata and load model</span>
+<span class="n">ann_metadata</span> <span class="o">=</span> <span class="n">bf</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
+
+<span class="c1"># Read data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get all columns except last as input values and last columns as output</span>
+<span class="n">x_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">values</span>
+
+<span class="c1"># Pack output data</span>
+<span class="n">y_real</span> <span class="o">=</span> <span class="n">pack_output_data_for_series</span><span class="p">(</span><span class="n">y_data</span><span class="p">,</span> <span class="n">ann_metadata</span><span class="p">)</span>
+
+<span class="c1"># Prepare input data for prediction</span>
+<span class="n">x_prepared</span> <span class="o">=</span> <span class="n">prepare_input_data</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">ann_metadata</span><span class="p">)</span>
+
+<span class="c1"># Prediction and scale predicted data</span>
+<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_prepared</span><span class="p">)</span>
+<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">scale_data_output</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">ann_metadata</span><span class="p">)</span>
+
+<span class="c1"># Calculate MAE</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_real</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-guide">
+<h2>API Guide<a class="headerlink" href="#api-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-blackfox_extras">
+<span id="module"></span><h3>Module<a class="headerlink" href="#module-blackfox_extras" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="blackfox_extras.prepare_input_data">
+<code class="sig-prename descclassname">blackfox_extras.</code><code class="sig-name descname">prepare_input_data</code><span class="sig-paren">(</span><em class="sig-param">input_data</em>, <em class="sig-param">metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#blackfox_extras.prepare_input_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Prepare the input for prediction with the following steps</dt><dd><ol class="arabic simple">
+<li><p>removing insignificant columns</p></li>
+<li><p>packing data for series</p></li>
+<li><p>scaling (normalizing) values</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data</strong> (<em>numpy.array</em>) – Input data as numpy array</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Model metadata</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Prepared values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="blackfox_extras.pack_output_data_for_series">
+<code class="sig-prename descclassname">blackfox_extras.</code><code class="sig-name descname">pack_output_data_for_series</code><span class="sig-paren">(</span><em class="sig-param">output_data</em>, <em class="sig-param">metadata</em><span class="sig-paren">)</span><a class="headerlink" href="#blackfox_extras.pack_output_data_for_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packing output data for series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>numpy.array</em>) – Data as numpy array</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Model metadata</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Packed data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="blackfox_extras.scale_output_data">
+<code class="sig-prename descclassname">blackfox_extras.</code><code class="sig-name descname">scale_output_data</code><span class="sig-paren">(</span><em class="sig-param">output_data</em>, <em class="sig-param">metadata</em>, <em class="sig-param">ignore_integrated_scaler=False</em><span class="sig-paren">)</span><a class="headerlink" href="#blackfox_extras.scale_output_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale data from normalized values to real values. Use after prediction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>numpy.array</em>) – Data as numpy array</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Model metadata</p></li>
+<li><p><strong>ignore_integrated_scaler</strong> (<em>bool</em>) – If False(default), only scale data if model does not contain integrated scaler</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Scaled data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">blackfox-extras</a></h1>
+
+
+
+
+
+
+
+
+
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Black Fox extras documentation</a><ul>
+<li><a class="reference internal" href="#user-s-guide">User’s Guide</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#example-usage">Example usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-guide">API Guide</a><ul>
+<li><a class="reference internal" href="#module-blackfox_extras">Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Vodena.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
