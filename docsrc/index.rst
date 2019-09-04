@@ -37,6 +37,7 @@ Model prediction with preparing data and calculating mean absolute error:
     import pandas as pd
     import numpy as np
     from sklearn.metrics import mean_absolute_error
+    from keras.models import load_model
 
     # Create an instance of the Black Fox class by supplying api URL
     bf = BlackFox('bf.endpoint.api.address')
