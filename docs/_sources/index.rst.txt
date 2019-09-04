@@ -6,6 +6,12 @@
 Black Fox extras documentation
 ==============================
 
+Black Fox extras is the companion package for the `Black Fox <http://blackfox.ai/>`_, *the neural network parameter optimization AI automation assistant*.
+
+Black Fox extras offer performant preparatory functions for both input and output, as well as for time series data.
+These functions are integrated into the Black Fox workflow, and they facilitate tedious tasks like removing the insignificant
+variables (columns), data scaling, and transformations needed for time series data.
+
 .. toctree::
     :maxdepth: 2
 
