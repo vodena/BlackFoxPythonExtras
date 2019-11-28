@@ -1,5 +1,5 @@
 from sklearn.preprocessing import MinMaxScaler
-
+import copy
 
 def scale_input_data(input_data, metadata, ignore_integrated_scaler=False):
     """
@@ -29,6 +29,7 @@ def scale_input_data(input_data, metadata, ignore_integrated_scaler=False):
         return input_data
 
 
+
 def scale_output_data(output_data, metadata, ignore_integrated_scaler=False):
     """
         Scale data from normalized values to real values. Use after prediction.
@@ -48,9 +49,15 @@ def scale_output_data(output_data, metadata, ignore_integrated_scaler=False):
             Scaled data
         """
     if ignore_integrated_scaler or not metadata['is_scaler_integrated']:
+        recurrent_output_count = metadata.get('recurrent_output_count', None)
+        config = metadata['scaler_config']['output']
+        if recurrent_output_count is not None:
+            config = copy.deepcopy(config)
+            config['fit'][0] = config['fit'][0] * recurrent_output_count
+            config['fit'][1] = config['fit'][1] * recurrent_output_count
         return __scale_data_from_config(
             output_data,
-            metadata['scaler_config']['output'],
+            config,
             metadata['scaler_name']
         )
     else:
