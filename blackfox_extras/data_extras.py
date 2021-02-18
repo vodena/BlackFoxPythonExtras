@@ -4,15 +4,16 @@ from .series_extras import pack_input_data_for_series
 from .series_extras import pack_output_data_for_series
 from .rnn_extras import pack_input_data_for_rnn
 from .rnn_extras import pack_output_data_for_rnn
-
+from .encodeDataSet import encode
 
 def prepare_input_data(input_data, metadata):
     """
         Prepare the input for prediction with the following steps
             1. removing insignificant columns
-            2. packing data for series
-            3. scaling (normalizing) values
-            4. pack data for recurrent neural network
+            2. encoding of input features
+            3. packing data for series
+            4. scaling (normalizing) values
+            5. pack data for recurrent neural network
         Parameters
         ----------
         input_data : numpy.array
@@ -26,6 +27,8 @@ def prepare_input_data(input_data, metadata):
             Prepared values
         """
     used_inputs = remove_not_used_inputs(input_data, metadata)
+    if 'input_encodings' in metadata:
+        used_inputs = encode(used_inputs, metadata['input_encodings'])
     if metadata['has_rolling']:
         used_inputs = pack_input_data_for_series(used_inputs, metadata)
     used_inputs = scale_input_data(used_inputs, metadata)
