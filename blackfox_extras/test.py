@@ -1,87 +1,16 @@
-# from .encodeDataSet import encode
-
-# import pandas as pd
-# from blackfox import BlackFox
-
-# # blackfox_url = 'http://147.91.204.14:32706'
-# blackfox_url = 'http://localhost:5000'
-
-# bf = BlackFox(blackfox_url)
-# metadata = bf.get_ann_metadata('F:\\.spyder-py3\\projekti\\Vodena_Primeri\\ImplementingEncodingInBf\\data\\11111111-1111-1111-1111-111111111111\\test_model_encoding_version_bf.h5')
-# print(metadata)
-
-
-# dataframe = pd.read_csv('F:\\.spyder-py3\\projekti\\Vodena_Primeri\\ImplementingEncodingInBf\\data\\data_set.csv')
-# used_inputs = dataframe.iloc[:, :-1].values   
-
-# if 'input_encodings' in metadata:
-#         used_inputs = encode(used_inputs, metadata['input_encodings'])
-# else:
-#     print('nema')
-        
-        
-
-# Importing Black Fox service libraries
-
-from blackfox import BlackFox
-from blackfox import AnnOptimizationConfig, RandomForestOptimizationConfig, XGBoostOptimizationConfig
-from blackfox import AnnOptimizationEngineConfig, OptimizationEngineConfig
-from blackfox import LogWriter, CsvLogWriter
-from blackfox_extras import prepare_input_data, scale_output_data
-
-# blackfox_url = 'http://147.91.204.14:32702' # BF_URL
-# blackfox_url = 'http://147.91.204.85:32723'# ~VODAFONE_URL
-# blackfox_url = 'http://147.91.204.14:32706' # BF FOR MAPE verziju blackfox 3.2.0
-blackfox_url = 'http://localhost:5000'
-bf = BlackFox(blackfox_url)
-
-# Importing libraries
-
-import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-import matplotlib as mpl
-mpl.style.use('ggplot')
-import warnings
-warnings.filterwarnings("ignore")
+import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-import h5py
-import time
 
-# Import data
-
-dataframe = pd.read_csv('F:\\.spyder-py3\\projekti\\Vodena_Primeri\\ANN\\Churn\\Churn_Modelling.csv')
+dataframe = pd.read_csv('C:\\Users\\VODENA06\\Desktop\\Jupyter\\BF\\BF_TESTIRANJE\\5_0_0\\Churn_Modelling.csv')
 
 print(dataframe.columns)
 
-
-# Importing libraries
-
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-import matplotlib as mpl
-mpl.style.use('ggplot')
-import warnings
-warnings.filterwarnings("ignore")
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-import h5py
-import time
-
-# Import data
-
-# dataframe = pd.read_csv('Churn_Modelling.csv')
-
-# Data preparation
-
 # df_X = dataframe.iloc[:, 3:13]
-y = dataframe.iloc[:, -1:].values
+y = dataframe.iloc[:, 13:14].values
+print(y[:5,:])
+y = np.array([3 if elem==0 else 5 for elem in y]).reshape(len(y), 1)
+print(y[:5,:])
 
 #df_X = pd.concat(
 #    [
@@ -90,9 +19,7 @@ y = dataframe.iloc[:, -1:].values
 #     df_X.drop(['Geography', 'Gender'], axis=1),
 #     ], axis=1)
 #X = df_X.iloc[:, :].values
-# X = dataframe.iloc[:, :-1].values
-
-X = dataframe.iloc[:, 3:-1].values
+X = dataframe.iloc[:, 3:13].values
 print(X[:3,:])
 
 from sklearn.preprocessing import LabelEncoder
@@ -122,60 +49,18 @@ print('shape 0 :{}      and shape 1 :{}'.format(X_val.shape[0], X_val.shape[1]))
 print('shape 0 :{}      and shape 1 :{}'.format(y_train.shape[0], y_train.shape[1]))
 print('shape 0 :{}      and shape 1 :{}\n'.format(y_val.shape[0], y_val.shape[1]))
 
-from blackfox import InputConfig, Encoding
 
-start = time.time()
 
-# ec = AnnOptimizationEngineConfig(
-#     population_size = 20,
-#     max_num_of_generations = 20
-# )
-
-# c = AnnOptimizationConfig(
-#     problem_type = "BinaryClassification",
-#     binary_optimization_metric = "ROC_AUC",
-#     engine_config = ec,
-#     inputs=[
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.DUMMY),
-#         InputConfig(encoding='Dummy'),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE),
-#         InputConfig(encoding=Encoding.NONE)
-#     ]
-#     )
-
-# # Use CTRL + C to stop optimization
-# (ann_io, ann_info, ann_metadata) = bf.optimize_ann(
-#     input_set = X_train,
-#     output_set = y_train,
-#     input_validation_set = X_val,
-#     output_validation_set = y_val,
-#     config = c,
-#     model_path = 'bf_model_churn_testiranje_bf_3_3_0_ENCODED.h5',
-#     delete_on_finish = False
-# )
-
-# end = time.time()
-# time_BF_ann = int(end-start)
-
-# print('\nann info:')
-# print(ann_info)
-
-# print('\nann metadata:')
-# print(ann_metadata)
 
 # Get model metadata
-model_name = 'C:\\Users\\VODENA06\\Desktop\\Jupyter\\BF\\BF_TESTIRANJE\\bf_model_churn_testiranje_bf_3_3_0_ENCODED.h5'
-metadata = bf.get_ann_metadata(model_name)
-print(metadata)
+metadata = {'__version': 8, 'scaler_name': 'MinMaxScaler', 'scaler_config': {'input': {'feature_range': [-1, 1], 'fit': [[350.0, 0.0, 0.0, 0.0, 0, 18.0, 0.0, 0.0, 1.0, 0.0, 0.0, 11.58], [850.0, 1.0, 1.0, 1.0, 1, 85.0, 10.0, 238387.56, 4.0, 1.0, 1.0, 199992.48]], 'inverse_transform': False}, 'output': {'feature_range': [0, 1], 'fit': [[0.0], [1.0]], 'inverse_transform': True}}, 'is_scaler_integrated': False, 'has_rolling': False, 'binary_metric': 'ROC_AUC', 'metric_threshold': None, 'input_encodings': [{'type': 'None'}, {'type': 'OneHot', 'categories': ['0', '1', '2']}, {'type': 'OrderInteger', 'mapping': {'1': 0, '0': 1}}, {'type': 'None'}, {'type': 'None'}, {'type': 'None'}, {'type': 'None'}, {'type': 'None'}, {'type': 'None'}, {'type': 'None'}], 'output_encoding': [{'type': 'Dummy', 'categories': ['3', '5']}]}
 
 # Prepare input data for prediction
+from data_extras import prepare_input_data
 X_test_prepared_with_BF = prepare_input_data(X_test, metadata)
 
+y_pred = [0.2,0.3,0.6,0.9,0,1,0.9,0,0,0,0,0,0]
+from encode_variable import VariableEncoding
+y_decoded = VariableEncoding.decode(y_pred, metadata)
 
-
+print('Done.')
