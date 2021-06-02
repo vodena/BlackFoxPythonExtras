@@ -22,8 +22,8 @@ class VariableEncoding:
             ----------
             data : numpy.array
                 Data as numpy array.
-            input_encoding_info : dict
-                Variable encoding info from training input data.
+            encoding_info : dict
+                Variable encoding info from training data.
 
             Returns
             -------
@@ -76,7 +76,7 @@ class VariableEncoding:
     
 
     @staticmethod
-    def decode(variable, variable_encoder_info, threshold=0.5):
+    def decode(variable, variable_encoder_info, threshold):
         """
             Decode variable in relation to the encode method used in the optimization process.
 
@@ -94,20 +94,23 @@ class VariableEncoding:
             numpy.array
                 Decoded variable.
         """
-        predicted_var = np.array(variable).reshape(len(variable), 1)
-
-        predicted_var =  np.where(predicted_var > 0.5, 1, 0)
 
         decoding_type = variable_encoder_info['type']
 
         if decoding_type in VariableEncoding.get_available_decoder_types():
             if decoding_type == "OneHot":
+                predicted_var = np.array(variable)
+                predicted_var =  np.where(predicted_var == predicted_var.max(axis=1).reshape(len(predicted_var),1), 1, 0)
+
                 training_input_categories = np.array(variable_encoder_info['categories'])           
                 enc = OneHotEncoder(categories = [training_input_categories])
                 enc.fit(training_input_categories.reshape(len(training_input_categories), 1))
                 decoded_variable = enc.inverse_transform(predicted_var)
                 decoded_variable = np.array([elem[0] for elem in decoded_variable]).reshape(len(decoded_variable), 1)
             else:
+                predicted_var = np.array(variable).reshape(len(variable), 1)
+                predicted_var =  np.where(predicted_var > threshold, 1, 0)
+
                 training_input_categories = np.array(variable_encoder_info['categories'])  
                 enc = OneHotEncoder(categories = [training_input_categories], drop = 'first')
                 enc.fit(training_input_categories.reshape(len(training_input_categories), 1))

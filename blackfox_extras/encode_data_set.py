@@ -44,7 +44,7 @@ def encode_inputs(input_data_set, input_encoding_info):
     
     return input_data_set
 
-def encode_output_data(output_data_set, output_encoding_info):
+def encode_output_data(output_data_set, metadata):
     """
         Test set output data encoding.
 
@@ -52,21 +52,26 @@ def encode_output_data(output_data_set, output_encoding_info):
         ----------
         output_data_set : numpy.array
             Test set output data as numpy array
-        output_encoding_info : [dict]
-            Output encoding info from training output data
+        metadata : [dict]
+            Optimization metadata
 
         Returns
         -------
         numpy.array
             Test set encoded output data
     """
-    output_data_set = np.array(output_data_set)
     
-    output_data_set = VariableEncoding.encode(output_data_set, output_encoding_info)
+
+    if 'output_encoding' in metadata:
+        output_data_set = np.array(output_data_set)
+        output_data_set = VariableEncoding.encode(output_data_set, metadata['output_encoding'][0])
+    else:
+        raise Exception ("The output variable has not been encoded so this method cannot be applied.") 
+
     
     return output_data_set
 
-def decode_output_data(output_data_set, metadata):
+def decode_output_data(output_data_set, metadata, threshold=0.5):
     """
         Test set output data decoding. Use after prediction.
 
@@ -74,8 +79,8 @@ def decode_output_data(output_data_set, metadata):
         ----------
         output_data_set : numpy.array
             Predicted data as numpy array
-        output_encoding_info : [dict]
-            Output encoding info from training output data
+        metadata : [dict]
+            Optimization metadata
 
         Returns
         -------
@@ -84,7 +89,7 @@ def decode_output_data(output_data_set, metadata):
     """
 
     if 'output_encoding' in metadata:
-        output_data_set = VariableEncoding.decode(output_data_set, metadata['output_encoding'][0])
+        output_data_set = VariableEncoding.decode(output_data_set, metadata['output_encoding'][0], threshold)
     else:
         raise Exception ("The output variable has not been encoded so this method cannot be applied.") 
 
