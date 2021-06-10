@@ -11,7 +11,7 @@
 from setuptools import setup, find_packages  # noqa: H301
 
 NAME = "blackfox_extras"
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 REQUIRES = ["blackfox >= 0.0.8", "numpy >= 1.16.2", "scikit-learn >= 0.21.2", "pandas >= 1.1.4", "category_encoders >= 2.2.2"]
 

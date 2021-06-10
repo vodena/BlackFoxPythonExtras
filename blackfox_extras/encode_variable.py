@@ -1,4 +1,4 @@
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from category_encoders import TargetEncoder
 from category_encoders.sum_coding import SumEncoder
 import pandas as pd
@@ -7,11 +7,11 @@ import numpy as np
 class VariableEncoding:
     @staticmethod
     def get_available_encoder_types():
-        return ["None", "OneHot", "Dummy", "Target", "Effect", "CountOfFrequency", "OrderInteger"]
+        return ["None", "OneHot", "Dummy", "Target", "Effect", "CountOfFrequency", "OrderInteger", "Label"]
 
     @staticmethod
     def get_available_decoder_types():
-        return ["OneHot", "Dummy"]
+        return ["OneHot", "Dummy", "Label"]
 
     @staticmethod
     def encode(variable, variable_encoder_info):
@@ -64,6 +64,13 @@ class VariableEncoding:
                 variable_str = pd.Series(variable_str.reshape(len(variable_str), ))
                 encoded_variable = variable_str.map(variable_encoder_info['mapping'])
                 encoded_variable = np.array(encoded_variable).reshape(len(encoded_variable), 1)
+            elif encoding_type == "Label":
+                training_input_categories = np.array(variable_encoder_info['categories'])
+                enc = LabelEncoder()
+                enc.classes_ = training_input_categories
+                enc.fit(training_input_categories.reshape(len(training_input_categories), 1))
+                encoded_variable = enc.transform(variable_str)
+                encoded_variable = np.array(encoded_variable).reshape(len(encoded_variable), 1)
             else:
                 variable_str = pd.Series(variable_str.reshape(len(variable_str), ))
                 encoded_variable = variable_str.map(variable_encoder_info['mapping'])
@@ -107,6 +114,15 @@ class VariableEncoding:
                 enc.fit(training_input_categories.reshape(len(training_input_categories), 1))
                 decoded_variable = enc.inverse_transform(predicted_var)
                 decoded_variable = np.array([elem[0] for elem in decoded_variable]).reshape(len(decoded_variable), 1)
+            elif decoding_type == "Label":
+                predicted_var = np.array(variable)
+
+                training_input_categories = np.array(variable_encoder_info['categories'])
+                enc = LabelEncoder()
+                enc.classes_ = training_input_categories
+                enc.fit(training_input_categories.reshape(len(training_input_categories), 1))
+                decoded_variable = enc.inverse_transform(predicted_var)
+                decoded_variable = np.array([elem for elem in decoded_variable]).reshape(len(decoded_variable), 1)
             else:
                 predicted_var = np.array(variable).reshape(len(variable), 1)
                 predicted_var =  np.where(predicted_var > threshold, 1, 0)

@@ -9,3 +9,4 @@ from .scaler_extras import scale_input_data, scale_output_data
 from .input_extras import remove_not_used_inputs
 from .data_extras import prepare_input_data, prepare_output_data
 from .encode_data_set import encode_inputs, encode_output_data, decode_output_data
+from .load_models import load_model

@@ -48,18 +48,19 @@ def scale_output_data(output_data, metadata, ignore_integrated_scaler=False):
         numpy.array
             Scaled data
         """
-    if ignore_integrated_scaler or not metadata['is_scaler_integrated']:
-        recurrent_output_count = metadata.get('recurrent_output_count', None)
-        config = metadata['scaler_config']['output']
-        if recurrent_output_count is not None:
-            config = copy.deepcopy(config)
-            config['fit'][0] = config['fit'][0] * recurrent_output_count
-            config['fit'][1] = config['fit'][1] * recurrent_output_count
-        return __scale_data_from_config(
-            output_data,
-            config,
-            metadata['scaler_name']
-        )
+    if metadata['scaler_config']['output']['fit'] is not None:
+        if ignore_integrated_scaler or not metadata['is_scaler_integrated']:
+            recurrent_output_count = metadata.get('recurrent_output_count', None)
+            config = metadata['scaler_config']['output']
+            if recurrent_output_count is not None:
+                config = copy.deepcopy(config)
+                config['fit'][0] = config['fit'][0] * recurrent_output_count
+                config['fit'][1] = config['fit'][1] * recurrent_output_count
+            return __scale_data_from_config(
+                output_data,
+                config,
+                metadata['scaler_name']
+            )
     else:
         return output_data
 
