@@ -151,10 +151,10 @@ def __get_input_row(data, metadata, i, input_count):
         d = data[offset-window:offset, j]
         n = len(d)
         if aggregation_type == 'sum':
-            r = range((n) % step, n-1, step)
+            r = range((n) % step, n, step)
             new_d = [sum(d[s:s+step]) for s in r]
         elif aggregation_type == 'avg':
-            r = range((n) % step, n-1, step)
+            r = range((n) % step, n, step)
             new_d = [np.mean(d[s:s+step]) for s in r]
         else:
             r = range((n-1) % step, n, step)
