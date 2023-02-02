@@ -1,4 +1,5 @@
 from sklearn.preprocessing import MinMaxScaler
+import numpy as np
 import copy
 
 def scale_input_data(input_data, metadata, ignore_integrated_scaler=False):
@@ -28,9 +29,41 @@ def scale_input_data(input_data, metadata, ignore_integrated_scaler=False):
     else:
         return input_data
 
+def scale_output_data(output_data, metadata):
+    """
+        Scale output data from real values to normalized.
 
+        Parameters
+        ----------
+        data : numpy.array
+            Data as numpy array
+        metadata : dict
+            Model metadata
+        ignore_integrated_scaler: bool
+            If False(default), only scale data if model does not contain integrated scaler
 
-def scale_output_data(output_data, metadata, ignore_integrated_scaler=False):
+        Returns
+        -------
+        numpy.array
+            Scaled data
+        """
+
+    if metadata['scaler_config']['output']['feature_range'] is not None:
+
+        output_data_ranges = [
+            {
+                'Min' : metadata['scaler_config']['output']['fit'][0][0],
+                'Max' : metadata['scaler_config']['output']['fit'][1][0]
+            }
+        ]
+
+        af_range = metadata['scaler_config']['output']['feature_range']
+
+        output_data = scale_data(output_data_ranges, af_range, output_data, False)
+
+    return output_data
+
+def rescale_output_data(output_data, metadata, ignore_integrated_scaler=False):
     """
         Scale data from normalized values to real values. Use after prediction.
 
@@ -84,3 +117,15 @@ def __min_max_scale_data(data, fit, feature_range, inverse=False):
         return scaler.inverse_transform(data)
     else:
         return scaler.transform(data)
+
+
+def scale_data(data_ranges, range, data, inverse=False):
+    min_max_scaler = MinMaxScaler(feature_range=range)
+    # set input ranges
+    in_ranges = list(map(lambda x: [x['Min'], x['Max']], data_ranges))
+    in_ranges = np.array(in_ranges).transpose()
+    min_max_scaler.fit(in_ranges)
+    if inverse is True:
+        return min_max_scaler.inverse_transform(data)
+    else:
+        return min_max_scaler.transform(data)
