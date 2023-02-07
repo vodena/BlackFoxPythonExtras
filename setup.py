@@ -20,7 +20,7 @@ REQUIRES = [
     "pandas >= 0.25.3",
     "category_encoders >= 2.2.2",
     "tensorflow >= 2.6.1",
-    "xgboost == 1.0.2"
+    "xgboost == 1.5.0"
     ]
 
 setup(
