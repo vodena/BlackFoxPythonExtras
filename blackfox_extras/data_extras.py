@@ -8,7 +8,7 @@ from .encode_data_set import encode_inputs, encode_output_data
 
 def prepare_input_data(input_data, metadata):
     """
-        Prepare the input for prediction or training with the following steps:
+        Prepare the input for prediction or training using following steps:
             1. Removing insignificant columns,
             2. Encoding of input features,
             3. Packing data for series,
@@ -39,7 +39,7 @@ def prepare_input_data(input_data, metadata):
 
 def prepare_output_data(output_data, metadata):
     """
-        Prepare the output for prediction or training with the following steps:
+        Prepare the output for prediction or training using following steps:
             1. Encode output data,
             2. Packing data for series,
             3. Scale output data,
@@ -67,7 +67,7 @@ def prepare_output_data(output_data, metadata):
 
 def pack_output_data_for_comparison_with_predictions(output_data, metadata):
     """
-        Prepare the output for comparison with the following steps:
+        Prepare the output for comparison using following steps:
             1. Encode output data,
             2. Packing data for series or pack data for recurrent neural network.
         Parameters
@@ -83,7 +83,7 @@ def pack_output_data_for_comparison_with_predictions(output_data, metadata):
             Prepared output values.
         """
     if 'output_encodings' in metadata:
-        output_data = encode_output_data(output_data, metadata['output_encodings'])
+        output_data = encode_output_data(output_data, metadata)
     if metadata['has_rolling']:
         output_data = pack_output_data_for_series(output_data, metadata)
     if metadata.get('recurrent_input_count', None) is not None and metadata.get('recurrent_output_count', None) is not None:
