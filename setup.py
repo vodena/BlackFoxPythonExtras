@@ -11,7 +11,7 @@
 from setuptools import setup, find_packages  # noqa: H301
 
 NAME = "blackfox_extras"
-VERSION = "1.3.3"
+VERSION = "1.3.4"
 
 REQUIRES = [
     "blackfox >= 6.1.0",

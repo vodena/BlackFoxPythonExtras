@@ -110,8 +110,9 @@ def __scale_data_from_config(data, config, scaler_name='MinMaxScaler'):
         raise Exception('Unknown scaler ' + scaler_name)
 
 
-def __min_max_scale_data(data, fit, feature_range, inverse=False):
-    scaler = MinMaxScaler(feature_range=feature_range)
+def __min_max_scale_data(data, fit, scaling_range, inverse=False):
+    scaling_range = (scaling_range[0], scaling_range[1])
+    scaler = MinMaxScaler(feature_range=scaling_range)
     scaler.fit(fit)
     if inverse is True:
         return scaler.inverse_transform(data)
@@ -119,8 +120,9 @@ def __min_max_scale_data(data, fit, feature_range, inverse=False):
         return scaler.transform(data)
 
 
-def scale_data(data_ranges, range, data, inverse=False):
-    min_max_scaler = MinMaxScaler(feature_range=range)
+def scale_data(data_ranges, scaling_range, data, inverse=False):
+    scaling_range = (scaling_range[0], scaling_range[1])
+    min_max_scaler = MinMaxScaler(feature_range=scaling_range)
     # set input ranges
     in_ranges = list(map(lambda x: [x['Min'], x['Max']], data_ranges))
     in_ranges = np.array(in_ranges).transpose()
