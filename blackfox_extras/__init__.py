@@ -10,4 +10,4 @@ from .input_extras import remove_not_used_inputs
 from .data_extras import prepare_input_data, prepare_output_data, pack_output_data_for_comparison_with_predictions
 from .encode_data_set import encode_inputs, encode_output_data, decode_output_data
 from .load_models import load_model
-from .calculate_metrics import calculate_regression_metrics, calculate_binary_metrics, calculate_multiclass_metrics
+from .calculate_metrics import calculate_regression_metrics, calculate_binary_metrics, calculate_multiclass_metrics, nse_custom_loss_function, rmse_lows_sensitive_custom_loss_function, rmse_peak_sensitive_custom_loss_function
